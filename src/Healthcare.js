@@ -224,6 +224,23 @@ const Healthcare = () => {
           </div>
         </div>
       </header>
+      {!account && (
+        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4">
+          <p className="text-sm">
+            <strong>Disclaimer:</strong> This application requires MetaMask (or
+            a compatible Ethereum wallet) to connect. Please install MetaMask
+            and connect your wallet to use this app.
+          </p>
+          <a
+            href="https://metamask.io/download.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline"
+          >
+            Download MetaMask
+          </a>
+        </div>
+      )}
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
