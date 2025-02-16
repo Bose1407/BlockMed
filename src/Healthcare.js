@@ -75,9 +75,9 @@ const Healthcare = () => {
     },
   ];
 
-  useEffect(() => {
-    const connectWallet = async () => {
-      try {
+  const connectWallet = async () => {
+    try {
+      if (window.ethereum) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         await provider.send("eth_requestAccounts", []);
         const signer = provider.getSigner();
@@ -96,12 +96,31 @@ const Healthcare = () => {
 
         const ownerAddress = await contract.getOwner();
         setIsOwner(accountAddress.toLowerCase() === ownerAddress.toLowerCase());
-      } catch (error) {
-        console.error("Error connecting to wallet: ", error);
-        toast.error("Error connecting to wallet: " + error.message);
+      } else {
+        toast.error(
+          "MetaMask is not installed. Please install MetaMask to use this app."
+        );
       }
-    };
-    connectWallet();
+    } catch (error) {
+      console.error("Error connecting to wallet: ", error);
+      toast.error("Error connecting to wallet: " + error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (window.ethereum) {
+      window.ethereum.on("accountsChanged", (accounts) => {
+        if (accounts.length > 0) {
+          setAccount(accounts[0]);
+        } else {
+          setAccount(null);
+          setProvider(null);
+          setSigner(null);
+          setContract(null);
+          setIsOwner(null);
+        }
+      });
+    }
   }, []);
 
   const fetchPatientRecords = async () => {
@@ -220,10 +239,19 @@ const Healthcare = () => {
                   Contract Owner
                 </span>
               )}
+              {!account && (
+                <button
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                  onClick={connectWallet}
+                >
+                  Connect Wallet
+                </button>
+              )}
             </div>
           </div>
         </div>
       </header>
+
       {!account && (
         <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4">
           <p className="text-sm">
